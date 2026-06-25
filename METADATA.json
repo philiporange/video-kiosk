@@ -1,20 +1,20 @@
 {
   "name": "video_kiosk",
-  "short_description": "Raspberry Pi OS SD card builder that provisions a VLC-based video kiosk with automated setup.",
-  "long_description": "Video Kiosk is a Bash-based tool that automates the provisioning of Raspberry Pi SD cards with a dedicated video playback system. It downloads the official Raspberry Pi OS Lite image, flashes it to a target block device, configures optional Wi-Fi and SSH access via a .env configuration file, and installs a first-boot script that upgrades the system, installs VLC, provisions SSH users with key-based authentication, and sets up automatic fullscreen video looping. The system supports both interactive and non-interactive modes, includes SSH hardening, and provides a complete hands-off deployment solution for creating standalone video display kiosks.",
+  "short_description": "Bash automation tool that flashes Raspberry Pi OS and provisions a headless VLC-based video kiosk with Wi-Fi and SSH configuration.",
+  "long_description": "Video Kiosk is a deployment automation tool for Raspberry Pi systems. It downloads and flashes the official Raspberry Pi OS Lite image to an SD card, configures optional Wi-Fi and SSH access through a .env configuration file, and installs a first-boot systemd service that automatically upgrades the system, installs VLC, provisions SSH users with key-based authentication, hardens SSH configuration, and sets up fullscreen video looping. The script supports both interactive and non-interactive modes, handles both standard SD cards (/dev/sdX) and eMMC devices (/dev/mmcblk0), and provides a complete unattended deployment solution for creating standalone video display kiosks.",
   "keywords": [
     "raspberry-pi",
     "kiosk",
     "video-playback",
-    "sd-card",
+    "sd-card-builder",
     "vlc",
-    "deployment",
-    "automation",
+    "deployment-automation",
     "bash",
     "system-administration",
     "embedded-linux",
-    "unattended-setup",
-    "ssh-provisioning"
+    "ssh-provisioning",
+    "wifi-configuration",
+    "systemd"
   ],
   "primary_language": "Bash",
   "languages": [
@@ -27,61 +27,31 @@
   "modules": [
     {
       "path": "build_sd_card.sh",
-      "description": "Main provisioning script that downloads Raspberry Pi OS, flashes to device, configures Wi-Fi/SSH, and installs kiosk boot service."
-    },
-    {
-      "path": "build_sd_card.sh - error()",
-      "description": "Error handling function that logs error messages and exits with status code 1."
-    },
-    {
-      "path": "build_sd_card.sh - require_cmd()",
-      "description": "Validates that required system commands (wget, xz, dd, etc.) are available on the host system."
-    },
-    {
-      "path": "build_sd_card.sh - detect_partitions()",
-      "description": "Detects boot and root partition identifiers from the target block device, handling both /dev/sdX and /dev/mmcblk0 naming conventions."
-    },
-    {
-      "path": "build_sd_card.sh - unmount_if_mounted()",
-      "description": "Safely unmounts a mount point if it is currently mounted, used during cleanup."
-    },
-    {
-      "path": "build_sd_card.sh - cleanup()",
-      "description": "EXIT trap handler that unmounts the boot and root partitions on script termination."
+      "description": "Main provisioning script that downloads Raspberry Pi OS, flashes to target device, configures Wi-Fi and SSH, and installs the kiosk boot systemd service."
     },
     {
       "path": "build_sd_card.sh - kiosk-boot.sh (embedded)",
-      "description": "First-boot script embedded in the SD card that performs system upgrade, installs VLC, configures SSH user with key authentication, hardens sshd, and initiates automatic video looping on subsequent boots."
-    },
-    {
-      "path": "build_sd_card.sh - configure_ssh_user()",
-      "description": "Creates or updates a sudo user with SSH directory and authorized_keys for key-based authentication on the Raspberry Pi."
-    },
-    {
-      "path": "build_sd_card.sh - harden_ssh()",
-      "description": "Applies SSH security hardening by disabling password authentication, root login, and challenge-response, restricting access to provisioned sudo user."
-    },
-    {
-      "path": "env.example",
-      "description": "Template configuration file documenting all available .env variables for image URL, mount points, Wi-Fi settings, SSH configuration, and interactive prompts."
+      "description": "First-boot script that performs system upgrade, installs VLC, configures SSH user with key authentication, hardens sshd, and runs automatic fullscreen video looping on subsequent boots."
     },
     {
       "path": "build_sd_card.sh - kiosk-boot.service (embedded)",
-      "description": "Systemd service unit that runs the kiosk-boot.sh script at every system boot with TTY and journal logging."
+      "description": "Systemd service unit that executes kiosk-boot.sh at every system boot with TTY and journal logging."
+    },
+    {
+      "path": "build_sd_card.sh - detect_partitions()",
+      "description": "Detects boot and root partition identifiers from target block device, handling /dev/sdX and /dev/mmcblk0 naming conventions."
+    },
+    {
+      "path": "build_sd_card.sh - configure_ssh_user()",
+      "description": "Creates or updates a sudo user with SSH directory, authorized_keys, and proper permissions for key-based authentication."
+    },
+    {
+      "path": "build_sd_card.sh - harden_ssh()",
+      "description": "Applies SSH security hardening by disabling password/root authentication and restricting access to the provisioned sudo user."
+    },
+    {
+      "path": "env.example",
+      "description": "Configuration template documenting all .env variables including image URL, mount points, Wi-Fi credentials, SSH settings, and interactive mode options."
     }
-  ],
-  "git": {
-    "is_repo": true,
-    "remote_url": "https://github.com/philiporange/video-kiosk.git",
-    "github_name": "philiporange/video-kiosk",
-    "default_branch": "master",
-    "last_commit": "2025-11-22T01:00:34+00:00"
-  },
-  "stats": {
-    "files": 6,
-    "lines_of_code": 360,
-    "size_bytes": 19753
-  },
-  "generated_at": "2025-12-06T23:21:44.448996",
-  "generator_version": "1.0.0"
+  ]
 }
